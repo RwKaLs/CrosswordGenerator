@@ -1,0 +1,38 @@
+private static List<CrosswordLayout> produceNewGeneration2(List<CrosswordLayout> population) {
+        population.sort(Comparator.comparingInt(CrosswordLayout::getCurrentFitness));
+
+        List<CrosswordLayout> children = new ArrayList<>();
+        List<CrosswordLayout> parents = new ArrayList<>();
+
+        for (int i = 0; i < 25; i++) {
+            parents.add(population.get(i));
+        }
+
+        for (int i = 0; i < 25; i++) {
+            for (int j = 0; j < 25; j++) {
+                if (i != j) {
+                    CrosswordLayout child = crossover(parents.get(i), parents.get(j));
+                    mutate(child);
+                    children.add(child);
+                }
+            }
+        }
+
+        children.sort(Comparator.comparingInt(CrosswordLayout::calculateFitness));
+
+        List<CrosswordLayout> newGeneration = new ArrayList<>();
+
+        int currentParent = 0;
+        int currentChild = 0;
+        for (int i = 0; i < POPULATION_SIZE; i++) {
+            if (currentParent < 25 && parents.get(currentParent).getCurrentFitness() < children.get(currentChild).getCurrentFitness()) {
+                newGeneration.add(parents.get(currentParent));
+                currentParent++;
+            } else {
+                newGeneration.add(children.get(currentChild));
+                currentChild++;
+            }
+        }
+
+        return newGeneration;
+    }
